@@ -1,0 +1,113 @@
+<html>
+
+<head>
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="index.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </body>
+</head>
+
+<body class="container">
+    <h1 style="font-family:SketchFlow Print;font-style:initial;margin-top: 10px;">
+        Add new emploey
+    </h1>
+    <div class="container divAddEmploey">
+        <input class="MyInput" type="text" id="tz" placeholder="הכנס תעודת זהות">
+
+        <input class="MyInput" type="text" id="firstName" placeholder="הכנס שם פרטי">
+
+        <input class="MyInput" type="text" id="lastName" placeholder="הכנס שם משפחה">
+
+        <input class="MyInput" type="text" id="phone" placeholder="הכנס טלפון">
+
+        <input class="MyInput" type="text" id="mail" placeholder="הכנס מייל">
+
+        <input class="MyInput" type="button" id="btnAddEmp" onclick="addEmploey()" value="ADD">
+        <div id="log"></div>
+    </div>
+    <h1 style="font-family:SketchFlow Print;font-style:initial;margin-top: 10px;">
+        list emploey
+    </h1>
+    <input class="MyInput" type="button" id="btnGetAllPhoneAndName" onclick="getEmploey()"
+        value="Get All Phone And Name">
+    <div class="container divAddEmploey" id="listEmploey">
+    </div>
+    <h1 style="font-family:SketchFlow Print;font-style:initial;margin-top: 10px;">
+        Details of emploey
+    </h1>
+    <input id="EmpId" type="text" placeholder="search emploey..." ondblclick="getFullDetailsById()">
+    <input type="button" value="delete" onclick="deletEmpById()">
+    <div id="detailsOfEmp" class="divAddEmploey" style="margin-left: 0px;margin-bottom: 20px;">
+    </div>
+
+</body>
+<script>
+    function getFullDetailsById() {
+        var id = $("#EmpId")[0].value;
+        $.get("http://localhost:3000/emploey/GetFullDetails/" + id, function (data, status) {
+            console.log(data);
+            document.getElementById('detailsOfEmp').innerHTML = ("firstName: " + data[0].firstName +
+                "<br>" + "LastName :" + data[0].lastName +
+                "<br>" + "tz :" + data[0].tz +
+                "<br>" + "mail :" + data[0].mail +
+                "<br>" + "phone :" + data[0].phone +
+                "<br>" + "isActive :" + data[0].isactive);
+        });
+    }
+    function deletEmpById() {
+        var id = $("#EmpId")[0].value;
+        $.get("http://localhost:3000/emploey/deleteEmp/" + id, function (data, status) {
+            console.log(data);
+        });
+    }
+    function addEmploey() {
+        var tz = $("#tz")[0].value;
+        var firstName = $("#firstName")[0].value;
+        var lastName = $("#lastName")[0].value;
+        var phone = $("#phone")[0].value;
+        var mail = $("#mail")[0].value;
+        $.post("http://localhost:3000/emploey/addEmploey",
+            {
+                tz: tz,
+                firstName: firstName,
+                lastName: lastName,
+                phone: phone,
+                mail: mail
+            },
+            function (data, status) {
+                document.getElementById('log').innerHTML += ("<h1>" + "Data: " + data + "\nStatus: " + status + "</h1>");
+            });
+    }
+    function getEmploey() {
+
+        $.get("http://localhost:3000/emploey/GetEmploeyDetails_phone_and_name",
+            function (data, status) {
+                console.log(data);
+                var myString ="";
+                for (let x=0;x<data.length;x++) {
+                    myString += " "+(data[x].firstName);
+                    myString += " "+(data[x].phone);
+                    myString += "<br>";
+                }
+                document.getElementById('listEmploey').innerHTML = myString;
+                //  ("<h1>" + "Data: " + data + "\nStatus: " + status + "</h1>");
+            });
+    }
+</script>
+
+</html>
