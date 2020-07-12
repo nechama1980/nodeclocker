@@ -93,21 +93,7 @@
                 document.getElementById('log').innerHTML += ("<h1>" + "Data: " + data + "\nStatus: " + status + "</h1>");
             });
     }
-    function getEmploey() {
-
-        $.get("http://localhost:3000/emploey/GetEmploeyDetails_phone_and_name",
-            function (data, status) {
-                console.log(data);
-                var myString ="";
-                for (let x=0;x<data.length;x++) {
-                    myString += " "+(data[x].firstName);
-                    myString += " "+(data[x].phone);
-                    myString += "<br>";
-                }
-                document.getElementById('listEmploey').innerHTML = myString;
-                //  ("<h1>" + "Data: " + data + "\nStatus: " + status + "</h1>");
-            });
-    }
+    
 </script>
 
 </html>

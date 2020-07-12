@@ -15,7 +15,7 @@ mainRouter.get('/GetEmploeyDetails_phone_and_name', function (req, res) {
     const col = client.db(dbName).collection('emploey');
     // Insert a bunch of documents
 
-    col.find({},{projection: { _id:0,firstName: 1, phone: 1 }}).toArray(function (err, result) {
+    col.find({},{projection: { _id:0,firstName: 1,lastName: 1,phone: 1 }}).toArray(function (err, result) {
       console.log(err);
       console.log(result);
       if (err) {
@@ -61,7 +61,7 @@ mainRouter.get('/deleteEmp/:id', function(req, res) {
     // Create a collection we want to drop later
     const col = client.db(dbName).collection('emploey');
     // Insert a bunch of documents
-    col.updateOne(({tz:req.params.id},{$set:{isactive:"false"}}),function(err, result){
+    col.updateOne(({tz:req.params.id},{$set:{tz:"22222"}}),function(err, result){
       if (err) {
         res.send('<b>error</b>');
       } else {
