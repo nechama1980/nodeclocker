@@ -30,8 +30,12 @@
     <br>
     <input hidden="true" id="EmpId" type="text" placeholder="search emploey...">
     <input hidden="true" id="btnDel" type="button" value="delete" onclick="deletEmpById()">
-    <button class="button" style="vertical-align:middle; " onclick="location.href='./index.html';"><span>רשימת
-            העובדים</span></button>
+    <button class="button" style="vertical-align:middle; " onclick="location.href='./addEmploey.html';">
+        <span>הוספת עובד</span></button>
+        <br>
+    <button class="button" style="vertical-align:middle; " onclick="location.href='./updateEmploey.html';">
+        <span>עדכון עובד</span>
+    </button>
 </body>
 <script>
     function showBtnDel() {
@@ -41,10 +45,12 @@
     function deletEmpById() {
         var id = $("#EmpId")[0].value;
         $.get("http://localhost:3000/emploey/deleteEmp/" + id,
-         function (data, status) {
-            console.log(data);
-            console.log(status)
-        });
+            function (data, status) {
+                console.log(data);
+                console.log(status);
+                $("#EmpId")[0].hidden = true;
+                $("#btnDel")[0].hidden = true;
+            });
     }
 </script>
 
