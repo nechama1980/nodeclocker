@@ -32,19 +32,28 @@
     <input hidden="true" id="btnDel" type="button" value="delete" onclick="deletEmpById()">
     <button class="button" style="vertical-align:middle; " onclick="location.href='./addEmploey.html';">
         <span>הוספת עובד</span></button>
-        <br>
+    <br>
     <button class="button" style="vertical-align:middle; " onclick="location.href='./updateEmploey.html';">
         <span>עדכון עובד</span>
     </button>
+    <button onclick="FUNC()"> </button>
 </body>
 <script>
+    function FUNC() {
+        $http.put("http://localhost:3000/emploey/UPDATEALL", function (data, status) {
+            console.log(data);
+            console.log(status);
+        });
+
+    }
     function showBtnDel() {
         $("#EmpId")[0].hidden = false;
         $("#btnDel")[0].hidden = false;
     }
     function deletEmpById() {
-        var id = $("#EmpId")[0].value;
-        $.get("http://localhost:3000/emploey/deleteEmp/" + id,
+        var id = $("#EmpId")[0].value
+        $.post("http://localhost:3000/emploey/deleteEmp",
+            { id: id },
             function (data, status) {
                 console.log(data);
                 console.log(status);
@@ -52,6 +61,19 @@
                 $("#btnDel")[0].hidden = true;
             });
     }
+
+    function getFullDetailsById() {
+        var id = $("#EmpId")[0].value;
+        $.get("http://localhost:3000/emploey/GetFullDetails/" + id, function (data, status) {
+            console.log(data);
+            document.getElementById('detailsOfEmp').innerHTML = ("firstName: " + data[0].firstName +
+                "<br>" + "LastName :" + data[0].lastName +
+                "<br>" + "tz :" + data[0].tz +
+                "<br>" + "mail :" + data[0].mail +
+                "<br>" + "phone :" + data[0].phone +
+                "<br>" + "isActive :" + data[0].isactive);
+        });
+    } 
 </script>
 
 </html>

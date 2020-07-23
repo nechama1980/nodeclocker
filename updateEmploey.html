@@ -32,6 +32,7 @@
             <input class="MyInput" type="text" id="lastName" placeholder="הכנס שם משפחה">
             <input class="MyInput" type="text" id="phone" placeholder="הכנס טלפון">
             <input class="MyInput" type="text" id="mail" placeholder="הכנס מייל">
+            <input type="checkbox" class="MyInput" type="text" id="isactive"><label>פעיל ?</label>
             <input class="MyInput" type="button" id="btnAddEmp" onclick="updateEmploey()" value="update">
             <div id="log"></div>
         </div>
@@ -47,14 +48,32 @@
                     $("#lastName")[0].value = data.lastName;
                     $("#phone")[0].value = data.phone;
                     $("#mail")[0].value = data.mail;
+                    let isactive = data.isactive;
+                    if (isactive === "true") {
+                        $("#isactive")[0].checked = true;
+                    }
+                    else {
+                        $("#isactive")[0].checked = false;
+                    }
+
                 }
 
             );
         }
         function updateEmploey() {
-                $.post("http://localhost:3000/emploey/UpdateDetails",
+            var tz = $("#tz")[0].value;
+            var firstName = $("#firstName")[0].value;
+            var lastName = $("#lastName")[0].value;
+            var phone = $("#phone")[0].value;
+            var mail = $("#mail")[0].value;
+            $.post("http://localhost:3000/emploey/UpdateDetails",
                 {
-
+                    tz: tz,
+                    firstName: firstName,
+                    lastName: lastName,
+                    phone: phone,
+                    mail: mail,
+                    isactive: isactive
                 }, function (data, status) {
                     alert("Data: " + data + "\nStatus: " + status);
                 });
