@@ -5,7 +5,6 @@ const MongoClient = require('mongodb').MongoClient;
 //פרטי כל העובדים : טלפון שם פרטי ומשפחה
 mainRouter.get('/GetEmploeyDetails_phone_and_name', function (req, res) {
   console.log("hi")
-  var emploeys = null;
   // Connection url
   const url = 'mongodb://localhost:27017';
   // Database Name
@@ -18,7 +17,7 @@ mainRouter.get('/GetEmploeyDetails_phone_and_name', function (req, res) {
     // Create a collection we want to drop later
     const col = client.db(dbName).collection('emploey');
     // Insert a bunch of documents
-    col.find({}, { projection: { _id: 0, firstName: 1, lastName: 1, phone: 1 } }).toArray(function (err, result) {
+    col.find({ isactive: "true" }, { projection: { _id: 0, firstName: 1, lastName: 1, phone: 1 } }).toArray(function (err, result) {
       console.log(err);
       console.log(result);
       if (err) {
@@ -30,29 +29,75 @@ mainRouter.get('/GetEmploeyDetails_phone_and_name', function (req, res) {
     })
   });
 });
-//פרטים של עובד יחיד לפי ת.ז
-mainRouter.get('/GetFullDetails/:id', function (req, res) {
-  console.log(req.params.id)
-  var emploeys = null;
+
+mainRouter.post('/getDetailsOfhouers', function (req, res) {
+  var myQuery = { tz: req.body.id };
+  const url = 'mongodb://localhost:27017';
+  const dbName = 'clocker';
+  MongoClient.connect(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+  }, function (err, client) {
+      const col = client.db(dbName).collection('emploey');
+      col.findOne(myQuery,{projection:{houersWorks:1}},function (err, result) {
+          if (err) {
+              res.send('<b>error</b>');
+          } else {
+              res.send(result);
+          }
+      }
+      );
+  });
+});
+
+//עדכון פרטי עובד
+mainRouter.post('/Update', function (req, res) {
   // Connection url
   const url = 'mongodb://localhost:27017';
   // Database Name
   const dbName = 'clocker';
   // Connect using MongoClient
-  MongoClient.connect(url, function (err, client) {
-    // Create a collection we want to drop later
+  MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
     const col = client.db(dbName).collection('emploey');
-    // Insert a bunch of documents
-    col.findOne({ tz: req.params.id }, function (err, result) {
-      if (err) {
-        res.send('<b>error</b>');
-      } else {
-        console.log(result);
-        res.send(result);
+    var myquery = { tz: req.body.tz };
+    var newVal = {
+      $set:
+      {
+        tz: req.body.tz,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        phone: req.body.phone,
+        mail: req.body.mail,
+        isactive: req.body.isactive,
       }
+    }
+    col.findOneAndUpdate(myquery, newVal, function (err, result) {
+      console.log(result);
+      res.send(result);
     })
   });
 });
+
+
+
+//בדיקה האם קיים לפי תז
+//והחזרת הנתונים שלו
+mainRouter.post('/checkIfExist', function (req, res) {
+  // Connection url
+  const url = 'mongodb://localhost:27017';
+  // Database Name
+  const dbName = 'clocker';
+  // Connect using MongoClient
+  MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
+    const col = client.db(dbName).collection('emploey');
+    var myquery = { tz: req.body.id };
+    col.findOne(myquery, function (err, result) {
+      console.log(result);
+      res.send(result);
+    })
+  });
+});
+
 //עדכון לכולם
 mainRouter.put('/UPDATEALL', function (req, res) {
   const url = 'mongodb://localhost:27017';
@@ -74,50 +119,32 @@ mainRouter.put('/UPDATEALL', function (req, res) {
   });
 });
 //מחיקת עובד
-mainRouter.post('/deleteEmp', function(req, res) {
-  console.log(req.body.id);
+mainRouter.post('/deleteEmp', function (req, res) {
   var emploeys = null;
   // Connection url
   const url = 'mongodb://localhost:27017';
   // Database Name
   const dbName = 'clocker';
   // Connect using MongoClient
-  MongoClient.connect(url,{ useUnifiedTopology: true }, function (err, client) {
+  MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
     const col = client.db(dbName).collection('emploey');
     var myquery = { tz: req.body.id };
-    var newvalues = { $set: { "isactive": "false"} };
-    col.findOneAndUpdate(myquery,newvalues,function(err, result){
+    var newvalues = { $set: { "isactive": "false" } };
+    col.findOneAndUpdate(myquery, newvalues, function (err, result) {
       if (err) {
         res.send('<b>error</b>');
       } else {
-        console.log(result);
-        res.send(result);
+        if (result.value == null) {
+          console.log("result=null")
+          res.send("no emploey");
+        }
+        else {
+          console.log("result!=null")
+          res.send(result);
+        }
       }
     })
   });
 });
-//הוספת עובד
-mainRouter.post('/addEmploey', function (req, res) {
-  console.log(req.body)
-  var emploeys = null;
-  // Connection url
-  const url = 'mongodb://localhost:27017';
-  // Database Name
-  const dbName = 'clocker';
-  // Connect using MongoClient
-  MongoClient.connect(url, function (err, client) {
-    // Create a collection we want to drop later
-    const col = client.db(dbName).collection('emploey');
-    // Insert a bunch of documents
-    col.insert(req.body, function (err, result) {
-      console.log(err);
-      console.log(result);
-      if (err) {
-        result.send('<b>error</b>');
-      } else {
-        result.send('<b>sucess</b>');
-      }
-    })
-  });
-});
+
 module.exports = mainRouter;

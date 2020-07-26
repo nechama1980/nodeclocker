@@ -2,7 +2,6 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="index.css">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
@@ -17,43 +16,94 @@
         crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="addEmploey.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.min.css'>
 </head>
 
 <body>
 
     <body class="container">
-        <h1 style="font-family:SketchFlow Print;font-style:initial;margin-top: 10px;">
-            Add new emploey
+        <h1 style="font-family:SketchFlow Print;font-style:initial;margin-top: 10px;" id="titlePage">
+            add emploey
         </h1>
         <div class="container divAddEmploey">
-            <input class="MyInput" type="text" id="tz" placeholder="הכנס תעודת זהות">
-            <input class="MyInput" type="text" id="firstName" placeholder="הכנס שם פרטי">
-            <input class="MyInput" type="text" id="lastName" placeholder="הכנס שם משפחה">
-            <input class="MyInput" type="text" id="phone" placeholder="הכנס טלפון">
-            <input class="MyInput" type="text" id="mail" placeholder="הכנס מייל">
-            <input class="MyInput" type="button" id="btnAddEmp" onclick="addEmploey()" value="ADD">
+            <input class="MyInput" type="text" id="tz" placeholder="הכנס תעודת זהות"><label>תעודת זהות</label>
+            <input class="MyInput" type="text" id="firstName" placeholder="הכנס שם פרטי"><label>שם פרטי</label>
+            <br>
+            <input class="MyInput" type="text" id="lastName" placeholder="הכנס שם משפחה"><label>שם משפחה</label>
+            <input class="MyInput" type="text" id="phone" placeholder="הכנס טלפון"><label>מספר טלפון</label>
+            <br>
+            <input class="MyInput" type="text" id="mail" placeholder="הכנס מייל"><label>מייל</label>
+            <input type="checkbox" id="isactive"><label>האם העובד פעיל ?</label>
+            <input class="MyInput" type="button" id="btnAddEmp" onclick="add_or_update()" value="ADD">
             <div id="log"></div>
         </div>
     </body>
     <script>
-        function addEmploey() {
+
+        console.log(sessionStorage);
+        if (sessionStorage.add_OR_update == "update") {
+            $("#btnAddEmp")[0].value = "update";
+            $("#titlePage")[0].innerHTML = "update";
+            $.post("http://localhost:3000/emploey/checkIfExist", { id: sessionStorage.idToUpdate }
+                , function (data) {
+                    console.log(data.tz);
+                    $("#tz")[0].value = data.tz;
+                    $("#firstName")[0].value = data.firstName;
+                    $("#lastName")[0].value = data.lastName;
+                    $("#phone")[0].value = data.phone;
+                    $("#mail")[0].value = data.mail;
+                    let isactive = data.isactive;
+                    if (isactive === "true") {
+                        $("#isactive")[0].checked = true;
+                    }
+                    else {
+                        $("#isactive")[0].checked = false;
+                    }
+                })
+        }
+        function add_or_update() {
+
             var tz = $("#tz")[0].value;
             var firstName = $("#firstName")[0].value;
             var lastName = $("#lastName")[0].value;
             var phone = $("#phone")[0].value;
             var mail = $("#mail")[0].value;
-            $.post("http://localhost:3000/emploey/addEmploey",
-                {
-                    tz: tz,
-                    firstName: firstName,
-                    lastName: lastName,
-                    phone: phone,
-                    mail: mail,
-                    isactive: true
-                },
-                function (data, status) {
-                    document.getElementById('log').innerHTML += ("<h1>" + "Data: " + data + "\nStatus: " + status + "</h1>");
-                });
+            if (sessionStorage.add_OR_update == 'add') {
+                $.post("http://localhost:3000/emploey/addEmploey",
+                    {
+                        tz: tz,
+                        firstName: firstName,
+                        lastName: lastName,
+                        phone: phone,
+                        mail: mail,
+                        isactive: "true"
+
+                    },
+                    function (data, status) {
+                        console
+                        if (status == "success")
+                            swal("Good job!", "הנתונים עודכנו בהצלחה", "success")
+                    });
+            }
+            else {
+                $.post("http://localhost:3000/emploey/Update",
+                    {
+                        tz: tz,
+                        firstName: firstName,
+                        lastName: lastName,
+                        phone: phone,
+                        mail: mail,
+                        isactive: $("#isactive")[0].checked
+                    },
+                    function (data, status) {
+                        if (status == "success")
+                            swal("Good job!", "הנתונים עודכנו בהצלחה", "success")
+                    });
+            }
+
         }
 
     </script>

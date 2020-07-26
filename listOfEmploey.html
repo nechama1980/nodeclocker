@@ -23,15 +23,13 @@
     <h1 style="font-family:SketchFlow Print;font-style:initial;margin-top: 30px;text-align: center;">
         list emploey
     </h1>
-    <input class="MyInput" type="button" id="btnGetAllPhoneAndName" onclick="getAllEmploey()"
-        value="Get All Phone And Name">
     <table class="container" id="listEmploey">
     </table>
 </body>
 <script>
     function generateTable(table, data) {
         let row = table.insertRow();
-        row.id="firstLine";
+        row.id = "firstLine";
         let cell = row.insertCell();
         let text = document.createTextNode("שם");
         cell.appendChild(text);
@@ -50,19 +48,14 @@
             }
         }
     }
-
-
-
-    function getAllEmploey() {
-        $.get("http://localhost:3000/emploey/GetEmploeyDetails_phone_and_name",
-            function (data, status) {
-                console.log(data);
-                let table = document.querySelector("table");
-                generateTable(table,data);
-            }
-
-        );
-    }
+    
+    $.get("http://localhost:3000/emploey/GetEmploeyDetails_phone_and_name",
+        function (data, status) {
+            console.log(data);
+            let table = document.querySelector("table");
+            generateTable(table, data);
+        }
+    );
 </script>
 
 </html>

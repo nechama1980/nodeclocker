@@ -1,10 +1,6 @@
-#btnGetAllPhoneAndName
-{
-    margin-left: 40%;
-}
-.MyInput
-{
-    margin-bottom: 10px;
+
+body{
+    color:black;
 }
 #listEmploey
 {
@@ -16,14 +12,14 @@ margin-top: 30px; */
 /* height: 100px; */
 
 width: 35%;
-border: lightcoral solid 0.5px;
+border:rgba(22, 112, 6, 0.657) solid 0.5px;
 }
 table,td,tr {
     text-align: center;
     direction: rtl;
     font-size:32px;
     font-family: art;
-    border:solid 0.5px lightcoral;
+    border:solid 0.5px rgba(22, 112, 6, 0.657);
 }
 #firstLine{
     font-weight: bold;
